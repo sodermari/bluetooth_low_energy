@@ -202,11 +202,21 @@ class MyCentralManager(context: Context, binaryMessenger: BinaryMessenger) : MyB
     override fun disconnect(addressArgs: String, callback: (Result<Unit>) -> Unit) {
         try {
             val gatt = mGATTs[addressArgs] ?: throw IllegalArgumentException()
+			clearCache(gatt)
             gatt.disconnect()
             mDisconnectCallbacks[addressArgs] = callback
         } catch (e: Throwable) {
             callback(Result.failure(e))
         }
+    }
+
+    private fun clearCache(gatt: BluetoothGatt) {
+	    try {
+		    val refresh: Method = gatt.javaClass.getMethod("refresh")
+		    refresh.invoke(gatt)
+	    } catch (e: Exception) {
+		    Log.e("BLE", "Failed to clear Gatt cache: $e", )
+	    }
     }
 
     override fun retrieveConnectedPeripherals(): List<MyPeripheralArgs> {
