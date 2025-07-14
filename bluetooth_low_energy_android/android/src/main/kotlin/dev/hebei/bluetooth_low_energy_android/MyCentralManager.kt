@@ -83,14 +83,12 @@ class MyCentralManager(context: Context, binaryMessenger: BinaryMessenger) :
         mWriteDescriptorCallbacks = mutableMapOf()
     }
 
+
     private val permissions: Array<String>
         get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            arrayOf(
-                android.Manifest.permission.BLUETOOTH_SCAN,
-                android.Manifest.permission.BLUETOOTH_CONNECT
-            )
+            arrayOf(android.Manifest.permission.BLUETOOTH_SCAN, android.Manifest.permission.BLUETOOTH_CONNECT, android.Manifest.permission.BLUETOOTH_ADVERTISE)
         } else {
-            arrayOf()
+            arrayOf(android.Manifest.permission.BLUETOOTH, android.Manifest.permission.ACCESS_FINE_LOCATION)
         }
 
     private val manager
