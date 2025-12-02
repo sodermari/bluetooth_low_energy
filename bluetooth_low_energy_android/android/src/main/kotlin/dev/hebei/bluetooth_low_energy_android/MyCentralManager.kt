@@ -310,8 +310,9 @@ class MyCentralManager(context: Context, binaryMessenger: BinaryMessenger) :
             if (!reading) {
                 throw IllegalStateException()
             }
+            val callbackKey = characteristic.uuid.hashCode().toLong()
             val callbacks = mReadCharacteristicCallbacks.getOrPut(addressArgs) { mutableMapOf() }
-            callbacks[hashCodeArgs] = callback
+            callbacks[callbackKey] = callback
         } catch (e: Throwable) {
             callback(Result.failure(e))
         }
@@ -339,8 +340,9 @@ class MyCentralManager(context: Context, binaryMessenger: BinaryMessenger) :
             if (!writing) {
                 throw IllegalStateException()
             }
+            val callbackKey = characteristic.uuid.hashCode().toLong()
             val callbacks = mWriteCharacteristicCallbacks.getOrPut(addressArgs) { mutableMapOf() }
-            callbacks[hashCodeArgs] = callback
+            callbacks[callbackKey] = callback
         } catch (e: Throwable) {
             callback(Result.failure(e))
         }
@@ -371,8 +373,9 @@ class MyCentralManager(context: Context, binaryMessenger: BinaryMessenger) :
             if (!reading) {
                 throw IllegalStateException()
             }
+            val callbackKey = descriptor.uuid.hashCode().toLong()
             val callbacks = mReadDescriptorCallbacks.getOrPut(addressArgs) { mutableMapOf() }
-            callbacks[hashCodeArgs] = callback
+            callbacks[callbackKey] = callback
         } catch (e: Throwable) {
             callback(Result.failure(e))
         }
@@ -397,8 +400,9 @@ class MyCentralManager(context: Context, binaryMessenger: BinaryMessenger) :
             if (!writing) {
                 throw IllegalStateException()
             }
+            val callbackKey = descriptor.uuid.hashCode().toLong()
             val callbacks = mWriteDescriptorCallbacks.getOrPut(addressArgs) { mutableMapOf() }
-            callbacks[hashCodeArgs] = callback
+            callbacks[callbackKey] = callback
         } catch (e: Throwable) {
             callback(Result.failure(e))
         }
@@ -583,9 +587,9 @@ class MyCentralManager(context: Context, binaryMessenger: BinaryMessenger) :
     ) {
         val device = gatt.device
         val addressArgs = device.address
-        val hashCodeArgs = characteristic.hashCode.args
+        val callbackKey = characteristic.uuid.hashCode().toLong()
         val callbacks = mReadCharacteristicCallbacks[addressArgs] ?: return
-        val callback = callbacks.remove(hashCodeArgs) ?: return
+        val callback = callbacks.remove(callbackKey) ?: return
         if (status == BluetoothGatt.GATT_SUCCESS) {
             callback(Result.success(value))
         } else {
@@ -601,9 +605,9 @@ class MyCentralManager(context: Context, binaryMessenger: BinaryMessenger) :
     ) {
         val device = gatt.device
         val addressArgs = device.address
-        val hashCodeArgs = characteristic.hashCode.args
+        val callbackKey = characteristic.uuid.hashCode().toLong()
         val callbacks = mWriteCharacteristicCallbacks[addressArgs] ?: return
-        val callback = callbacks.remove(hashCodeArgs) ?: return
+        val callback = callbacks.remove(callbackKey) ?: return
         if (status == BluetoothGatt.GATT_SUCCESS) {
             callback(Result.success(Unit))
         } else {
@@ -631,9 +635,9 @@ class MyCentralManager(context: Context, binaryMessenger: BinaryMessenger) :
     ) {
         val device = gatt.device
         val addressArgs = device.address
-        val hashCodeArgs = descriptor.hashCode.args
+        val callbackKey = descriptor.uuid.hashCode().toLong()
         val callbacks = mReadDescriptorCallbacks[addressArgs] ?: return
-        val callback = callbacks.remove(hashCodeArgs) ?: return
+        val callback = callbacks.remove(callbackKey) ?: return
         if (status == BluetoothGatt.GATT_SUCCESS) {
             callback(Result.success(value))
         } else {
@@ -645,9 +649,9 @@ class MyCentralManager(context: Context, binaryMessenger: BinaryMessenger) :
     fun onDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
         val device = gatt.device
         val addressArgs = device.address
-        val hashCodeArgs = descriptor.hashCode.args
+        val callbackKey = descriptor.uuid.hashCode().toLong()
         val callbacks = mWriteDescriptorCallbacks[addressArgs] ?: return
-        val callback = callbacks.remove(hashCodeArgs) ?: return
+        val callback = callbacks.remove(callbackKey) ?: return
         if (status == BluetoothGatt.GATT_SUCCESS) {
             callback(Result.success(Unit))
         } else {
